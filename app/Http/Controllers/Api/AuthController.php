@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 use Laravel\Sanctum\Sanctum;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -18,8 +19,6 @@ class AuthController extends Controller
             'name' => 'required',
             'email' => 'required|unique:users',
             'phone' => 'required',
-            'address' => 'required',
-            'department_id' => 'required|exists:departments,id',
             'password' => 'required|min:6|max:8',
         ]);
         User::create($data);
@@ -56,4 +55,44 @@ class AuthController extends Controller
             "message" => 'User Logged In successfully',
         ], 200);
     }
+
+    public function getProfileDetails(){
+        $id = auth()->user()->id;   
+        $userDetails = User::where('id', $id)->get();
+        return response()->json([
+            "status" => 'success',
+            "user" =>  $userDetails,
+            "message" => 'User details got fetched',
+        ], 200);
+    }
+
+public function updateProfileDetails(Request $request)
+{
+    // Validate the input data
+    $data = $request->validate([
+        'name' => 'required',
+        'phone' => 'required',
+        'password' => 'nullable|min:6|max:8',
+        'department_id' => 'required|exists:departments,id', // Ensure department exists
+        'address' => 'nullable'
+    ]);
+
+    // If a new password is provided, hash it
+    if (isset($data['password']) && !empty($data['password'])) {
+        $data['password'] = Hash::make($data['password']);
+    }
+
+    // Get the authenticated user
+    $user = User::where('id', auth()->user()->id)->get()->first();
+
+    // Update the user details
+     $user->update($data);
+
+        return response()->json([
+            "status" => 'success',
+            "user" => $user, // Return the updated user details
+            "message" => 'User details updated successfully',
+        ], 200);
+    }
 }
+

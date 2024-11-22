@@ -13,3 +13,8 @@ Route::post('/departments', [DepartmentController::class, 'store']);
 Route::put('/departments/{id}', [DepartmentController::class, 'update']);
 Route::delete('/departments/{id}', [DepartmentController::class, 'destroy']);
 Route::get('/departments', [DepartmentController::class, 'index']);
+
+Route::group(['middleware' => ['auth:sanctum']], function(){
+    Route::get('get-profile',[AuthController::class,'getProfileDetails']);
+    Route::post('update-profile', [AuthController::class, 'updateProfileDetails']);
+});
