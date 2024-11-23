@@ -16,7 +16,7 @@ class DepartmentController extends Controller
         ]);
 
         $department = Department::create($validated);
-        return response()->json($department, 201); 
+        return response()->json($department, 201);
     }
 
 
