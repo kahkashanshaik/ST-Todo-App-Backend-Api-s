@@ -12,8 +12,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\Sanctum;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -67,38 +65,6 @@ class AuthController extends Controller
             "token" =>  $token,
             "user" =>  $user,
             "message" => 'User Logged In successfully',
-        ], 200);
-    }
-
-    public function getProfileDetails()
-    {
-        $id = auth()->user()->id;
-        $userDetails = User::where('id', $id)->get();
-        return response()->json([
-            "status" => 'success',
-            "user" =>  $userDetails,
-            "message" => 'User details got fetched!',
-        ], 200);
-    }
-
-    public function updateProfileDetails(Request $request)
-    {
-        $data = $request->validate([
-            'name' => 'required',
-            'phone' => 'required',
-            'password' => 'nullable|min:6|max:8',
-            'department_id' => 'required|exists:departments,id',
-            'address' => 'nullable'
-        ]);
-        $user = User::where('id', auth()->user()->id)->get()->first();
-        if (isset($data['password']) && !empty($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        }
-        $user->update($data);
-        return response()->json([
-            "status" => 'success',
-            "user" =>  $user,
-            "message" => 'User details got pdated!',
         ], 200);
     }
 }

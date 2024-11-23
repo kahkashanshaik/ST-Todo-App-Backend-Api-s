@@ -20,3 +20,8 @@ Route::group(['middleware' => ["auth:sanctum", "verified"]], function () {
     Route::get('get-profile', [AuthController::class, 'getProfileDetails']);
     Route::post('update-profile', [AuthController::class, 'updateProfileDetails']);
 });
+
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('get-profile', [AuthController::class, 'getProfileDetails']);
+    Route::post('update-profile', [AuthController::class, 'updateProfileDetails']);
+});
